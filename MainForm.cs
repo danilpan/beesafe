@@ -10,9 +10,9 @@ namespace BeeSafe
 {
     public partial class MainForm : Form
     {
-        private static SerialPort phonePort;
-        private static readonly string sanitizerPortName = "COM3";
-        private static readonly string temperaturePortName = "COM4";
+        //private static SerialPort phonePort;
+        //private static readonly string sanitizerPortName = "COM3";
+        //private static readonly string temperaturePortName = "COM4";
 
         static WMPLib.IWMPPlaylist playlist;
         static WMPLib.IWMPMedia media;
@@ -22,19 +22,46 @@ namespace BeeSafe
         protected delegate void hidePicture();
         protected delegate void getImage();
 
+        VideoCapture capture;
+        Mat frame;
+        Bitmap image;
+        private Thread camera;
         public MainForm()
         {
             InitializeComponent();
             SetTemperature("");
             pictureBoxForImage.Hide();
             InitializeVideoPlayer(1);
-            InitializeComPort();
-            ReadPort(phonePort);
+            CaptureCamera();
+            //InitializeComPort();
+            //ReadPort(phonePort);
         }
+        private void CaptureCamera()
+        {
+            camera = new Thread(new ThreadStart(CaptureCameraCallback));
+            camera.Start();
+        }
+        private void CaptureCameraCallback()
+        {
 
+            frame = new Mat();
+            capture = new VideoCapture(0);
+            capture.Open(0);
+
+            if (capture.IsOpened())
+            {
+                while (true)
+                {
+
+                    capture.Read(frame);
+                    image = BitmapConverter.ToBitmap(frame);
+                }
+            }
+        }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            phonePort.Close();
+            //phonePort.Close();
+            capture.Dispose();
             Environment.Exit(1);
         }
 
@@ -55,6 +82,8 @@ namespace BeeSafe
                 videoPlayer.currentPlaylist = playlist;
                 videoPlayer.uiMode = "None";
                 videoPlayer.settings.setMode("loop", true);
+                videoPlayer.settings.setMode("shuffle", true);
+
             }
             catch (Exception e)
             {
@@ -63,16 +92,6 @@ namespace BeeSafe
         }
 
 
-        private void InitializeComPort()
-        {
-            phonePort = new SerialPort(sanitizerPortName, 9600, Parity.None, 8, StopBits.One);
-            phonePort.DataReceived += DataReceivedHandler;
-        }
-
-        private void ReadPort(SerialPort sp)
-        {
-            sp.Open();
-        }
 
         public void SetVideo(string value)
         {
@@ -108,16 +127,7 @@ namespace BeeSafe
             }
             else
             {
-                Mat frame = new Mat();
-                VideoCapture capture = new VideoCapture();
-                capture.Open(0);
-                if (capture.IsOpened())
-                {
-                    capture.Read(frame);
-                    Bitmap image = BitmapConverter.ToBitmap(frame);
-                    pictureBoxForImage.Image = image;
-                }
-                capture.Dispose();
+                    pictureBox1.Image = image;
             }
         }
 
@@ -126,18 +136,25 @@ namespace BeeSafe
 
             if (this.InvokeRequired)
             {
-                this.Invoke(new setPicture(pictureBoxForImage.Show));
+                this.Invoke(new setPicture(pictureBox1.Show));
             }
             else
-            {
-                pictureBoxForImage.Show();
+           {
+                try
+                {
+                    pictureBox1.Show();
+                }catch(Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
+
             }
         }
 
         public void HidePictureBox()
         {
-            if (this.InvokeRequired) this.Invoke(new setPicture(pictureBoxForImage.Hide));
-            else pictureBoxForImage.Hide();
+            if (this.InvokeRequired) this.Invoke(new setPicture(pictureBox1.Hide));
+            else pictureBox1.Hide();
         }
 
 
@@ -214,19 +231,71 @@ namespace BeeSafe
         private string getTemperature()
         {
             string temperature = "Not Identified";
-            SerialPort port = new SerialPort(temperaturePortName, 9600, Parity.None, 8, StopBits.One);
-            try
-            {
-                port.Open();
-                temperature = port.ReadLine().Split(' ')[4];
-                port.Close();
-            }
-            catch (Exception ex)
-            {
-                Emailer.getInstance().logException(ex);
-            }
+            //SerialPort port = new SerialPort(temperaturePortName, 9600, Parity.None, 8, StopBits.One);
+            //try
+            //{
+            //    port.Open();
+            //    temperature = port.ReadLine().Split(' ')[4];
+            //    port.Close();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Emailer.getInstance().logException(ex);
+            //}
 
             return temperature;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            HidePictureBox();
+            SetTemperature("");
+            InitializeVideoPlayer(1);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            HidePictureBox();
+            SetTemperature("");
+            InitializeVideoPlayer(2);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            InitializeVideoPlayer(3);
+            SetTemperature(getTemperature());
+            ShowPictureBox();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            InitializeVideoPlayer(4);
+            HidePictureBox();
+            SetTemperature("");
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            InitializeVideoPlayer(5);
+            HidePictureBox();
+            SetTemperature("");
+        }
+        private void button7_Click(object sender, EventArgs e)
+        {
+            SetTemperature(getTemperature());
+            setImageToPictureBox();
+            ShowPictureBox();
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            System.GC.Collect();
+            System.GC.WaitForPendingFinalizers();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

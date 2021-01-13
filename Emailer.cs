@@ -69,7 +69,7 @@ namespace BeeSafe
             mail.Subject = subject;
             mail.Body = message;
 
-            this.smtp.Send(mail);
+            //this.smtp.Send(mail);
         }
 
         public void sendMessage(String message, String clientEmail)
