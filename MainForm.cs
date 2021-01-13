@@ -22,12 +22,17 @@ namespace BeeSafe
         protected delegate void hidePicture();
         protected delegate void getImage();
 
+        VideoCapture capture;
+        Mat frame;
+        Bitmap image;
+        private Thread camera;
         public MainForm()
         {
             InitializeComponent();
             SetTemperature("");
             pictureBoxForImage.Hide();
             InitializeVideoPlayer(1);
+            CaptureCamera();
             InitializeComPort();
             ReadPort(phonePort);
         }
@@ -35,9 +40,31 @@ namespace BeeSafe
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             phonePort.Close();
+            capture.Dispose();
             Environment.Exit(1);
         }
+        private void CaptureCamera()
+        {
+            camera = new Thread(new ThreadStart(CaptureCameraCallback));
+            camera.Start();
+        }
+        private void CaptureCameraCallback()
+        {
 
+            frame = new Mat();
+            capture = new VideoCapture(0);
+            capture.Open(0);
+
+            if (capture.IsOpened())
+            {
+                while (true)
+                {
+
+                    capture.Read(frame);
+                    image = BitmapConverter.ToBitmap(frame);
+                }
+            }
+        }
         private void InitializeVideoPlayer(int id)
         {
             try
@@ -55,6 +82,8 @@ namespace BeeSafe
                 videoPlayer.currentPlaylist = playlist;
                 videoPlayer.uiMode = "None";
                 videoPlayer.settings.setMode("loop", true);
+                videoPlayer.settings.setMode("shuffle", true);
+
             }
             catch (Exception e)
             {
@@ -108,16 +137,7 @@ namespace BeeSafe
             }
             else
             {
-                Mat frame = new Mat();
-                VideoCapture capture = new VideoCapture();
-                capture.Open(0);
-                if (capture.IsOpened())
-                {
-                    capture.Read(frame);
-                    Bitmap image = BitmapConverter.ToBitmap(frame);
                     pictureBoxForImage.Image = image;
-                }
-                capture.Dispose();
             }
         }
 
@@ -129,8 +149,15 @@ namespace BeeSafe
                 this.Invoke(new setPicture(pictureBoxForImage.Show));
             }
             else
-            {
-                pictureBoxForImage.Show();
+           {
+                try
+                {
+                    pictureBoxForImage.Show();
+                }catch(Exception e)
+                {
+                    Emailer.getInstance().logException(e);
+                }
+
             }
         }
 
@@ -145,7 +172,6 @@ namespace BeeSafe
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             char c1 = getSignal(sender);
-            MessageBox.Show("Signal: "+c1);
             // Рекламные ролики
             if (c1 == '1')
             {
