@@ -47,18 +47,25 @@ namespace BeeSafe
 
         private void InitializeVideoPlayer(int id)  
         {
-            var videosPath = VideoProvider.GetVideosById(id);
-            videoPlayer.playlistCollection.remove(videoPlayer.currentPlaylist);
-            playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
-            foreach (string video in videosPath)
+            try
             {
-                SetVideo(video);
-                playlist.appendItem(media);
+                var videosPath = VideoProvider.GetVideosById(id);
+                videoPlayer.playlistCollection.remove(videoPlayer.currentPlaylist);
+                playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
+                foreach (string video in videosPath)
+                {
+                    SetVideo(video);
+                    playlist.appendItem(media);
+                }
+
+                videoPlayer.currentPlaylist = playlist;
+                videoPlayer.uiMode = "None";
+                videoPlayer.settings.setMode("loop", true);
             }
-            
-            videoPlayer.currentPlaylist = playlist;
-            videoPlayer.uiMode = "None";
-            videoPlayer.settings.setMode("loop", true);
+            catch (Exception e)
+            {
+                Emailer.getInstance().logException(e);
+            }
         }
 
         public void SetVideo(string value)
@@ -164,9 +171,9 @@ namespace BeeSafe
             // Положите телефон
             else if (c1 == '3')
             {
-                InitializeVideoPlayer(3);
                 SetTemperature(getTemperature());
                 ShowPictureBox();
+                InitializeVideoPlayer(3);
             }
 
             // Обработка телефона
