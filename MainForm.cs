@@ -14,7 +14,6 @@ namespace BeeSafe
         private static readonly string sanitizerPortName = "COM3";
         private static readonly string temperaturePortName = "COM4";
 
-        static WMPLib.IWMPPlaylist playlist;
         static WMPLib.IWMPMedia media;
 
         protected delegate void setValue(string value);
@@ -22,10 +21,6 @@ namespace BeeSafe
         protected delegate void hidePicture();
         protected delegate void getImage();
 
-        VideoCapture capture;
-        Mat frame;
-        Bitmap image;
-        private Thread camera;
         public MainForm()
         {
             InitializeComponent();
@@ -36,42 +31,27 @@ namespace BeeSafe
             InitializeComPort();
             ReadPort(phonePort);
         }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        public void SetTemperature(string value)
         {
-            phonePort.Close();
-            capture.Dispose();
-            Environment.Exit(1);
-        }
-        private void CaptureCamera()
-        {
-            camera = new Thread(new ThreadStart(CaptureCameraCallback));
-            camera.Start();
-        }
-        private void CaptureCameraCallback()
-        {
-
-            frame = new Mat();
-            capture = new VideoCapture(0);
-            capture.Open(0);
-
-            if (capture.IsOpened())
+            if (this.InvokeRequired)
             {
-                while (true)
-                {
-
-                    capture.Read(frame);
-                    image = BitmapConverter.ToBitmap(frame);
-                }
+                Invoke(new setValue(SetTemperature), value);
             }
+            else
+            {
+                this.temperatureLabel.Text = value;
+            }
+
         }
+
         private void InitializeVideoPlayer(int id)
         {
             try
             {
                 var videosPath = VideoProvider.GetVideosById(id);
 
-                playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
+                WMPLib.IWMPPlaylist playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
+                playlist.clear();
 
                 foreach (string video in videosPath)
                 {
@@ -91,18 +71,6 @@ namespace BeeSafe
             }
         }
 
-
-        private void InitializeComPort()
-        {
-            phonePort = new SerialPort(sanitizerPortName, 9600, Parity.None, 8, StopBits.One);
-            phonePort.DataReceived += DataReceivedHandler;
-        }
-
-        private void ReadPort(SerialPort sp)
-        {
-            sp.Open();
-        }
-
         public void SetVideo(string value)
         {
             if (this.InvokeRequired)
@@ -115,31 +83,35 @@ namespace BeeSafe
                 media = videoPlayer.newMedia(value);
             }
         }
-
-        public void SetTemperature(string value)
+        private void CaptureCamera()
         {
-            if (this.InvokeRequired)
-            {
-                Invoke(new setValue(SetTemperature), value);
-            }
-            else
-            {
-                this.temperatureLabel.Text = value;
-            }
-
+            Thread camera = new Thread(new ThreadStart(CaptureCameraCallback));
+            camera.Start();
         }
-
-        public void setImageToPictureBox()
+        private void CaptureCameraCallback()
         {
-            if (this.InvokeRequired)
+
+            Mat frame = new Mat();
+            VideoCapture capture = new VideoCapture(0);
+            capture.Open(0);
+
+            if (capture.IsOpened())
             {
-                this.Invoke(new getImage(setImageToPictureBox));
-            }
-            else
-            {
+                while (true)
+                {
+
+                    capture.Read(frame);
+                    Bitmap image = BitmapConverter.ToBitmap(frame);
+                    if (pictureBoxForImage.Image != null)
+                    {
+                        pictureBoxForImage.Image.Dispose();
+                    }
                     pictureBoxForImage.Image = image;
+
+                }
             }
         }
+
 
         public void ShowPictureBox()
         {
@@ -149,15 +121,8 @@ namespace BeeSafe
                 this.Invoke(new setPicture(pictureBoxForImage.Show));
             }
             else
-           {
-                try
-                {
-                    pictureBoxForImage.Show();
-                }catch(Exception e)
-                {
-                    Emailer.getInstance().logException(e);
-                }
-
+            {
+                pictureBoxForImage.Show();
             }
         }
 
@@ -167,6 +132,23 @@ namespace BeeSafe
             else pictureBoxForImage.Hide();
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            phonePort.Close();
+            Environment.Exit(1);
+        }
+
+
+        private void InitializeComPort()
+        {
+            phonePort = new SerialPort(sanitizerPortName, 9600, Parity.None, 8, StopBits.One);
+            phonePort.DataReceived += DataReceivedHandler;
+        }
+
+        private void ReadPort(SerialPort sp)
+        {
+            sp.Open();
+        }
 
         //Data Received Event Handler
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
@@ -215,7 +197,6 @@ namespace BeeSafe
             //Показ фотографий и температуры 
             else if (c1 == '7')
             {
-                setImageToPictureBox();
                 SetTemperature(getTemperature());
                 ShowPictureBox();
             }
@@ -225,6 +206,7 @@ namespace BeeSafe
                 Emailer.getInstance().logOnLiquidEnded();
             }
         }
+
         private char getSignal(object sender)
         {
             SerialPort sp = sender as SerialPort;
