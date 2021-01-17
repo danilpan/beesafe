@@ -47,26 +47,18 @@ namespace BeeSafe
 
         private void InitializeVideoPlayer(int id)  
         {
-            try
+            var videosPath = VideoProvider.GetVideosById(id);
+            playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
+            
+            foreach (string video in videosPath)
             {
-                var videosPath = VideoProvider.GetVideosById(id);
-
-                playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
-
-                foreach (string video in videosPath)
-                {
-                    SetVideo(video);
-                    playlist.appendItem(media);
-                }
-
-                videoPlayer.currentPlaylist = playlist;
-                videoPlayer.uiMode = "None";
-                videoPlayer.settings.setMode("loop", true);
+                SetVideo(video);
+                playlist.appendItem(media);
             }
-            catch (Exception e)
-            {
-                Emailer.getInstance().logException(e);
-            }
+            
+            videoPlayer.currentPlaylist = playlist;
+            videoPlayer.uiMode = "None";
+            videoPlayer.settings.setMode("loop", true);
         }
 
         public void SetVideo(string value)
@@ -234,11 +226,6 @@ namespace BeeSafe
             }
 
             return temperature;
-        }
-
-        private void videoPlayer_Enter(object sender, EventArgs e)
-        {
-
         }
     }
 }
