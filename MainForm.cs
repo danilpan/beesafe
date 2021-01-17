@@ -50,11 +50,15 @@ namespace BeeSafe
             try
             {
                 var videosPath = VideoProvider.GetVideosById(id);
-                if(playlist != null)
+
+                if (playlist != null)
                 {
+                    playlist.clear();
                     videoPlayer.playlistCollection.remove(playlist);
                 }
+
                 playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
+
                 foreach (string video in videosPath)
                 {
                     SetVideo(video);
@@ -64,7 +68,6 @@ namespace BeeSafe
                 videoPlayer.currentPlaylist = playlist;
                 videoPlayer.settings.setMode("loop", true);
                 videoPlayer.settings.setMode("shuffle", true);
-
             }
             catch (Exception e)
             {
