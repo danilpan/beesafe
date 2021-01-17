@@ -48,8 +48,8 @@ namespace BeeSafe
         private void InitializeVideoPlayer(int id)  
         {
             var videosPath = VideoProvider.GetVideosById(id);
-            playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
-            
+            videoPlayer.playlistCollection.remove(videoPlayer.currentPlaylist);
+            playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
             foreach (string video in videosPath)
             {
                 SetVideo(video);
