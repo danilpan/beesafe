@@ -45,7 +45,7 @@ namespace BeeSafe
 
         }
 
-        private void InitializeVideoPlayer(int id)
+        private void InitializeVideoPlayer(int id)  
         {
             try
             {
@@ -234,6 +234,11 @@ namespace BeeSafe
             }
 
             return temperature;
+        }
+
+        private void videoPlayer_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }
