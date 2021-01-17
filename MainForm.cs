@@ -5,7 +5,6 @@ using System.Drawing;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
-using WMPLib;
 
 namespace BeeSafe
 {
@@ -14,9 +13,10 @@ namespace BeeSafe
         private static SerialPort phonePort;
         private static readonly string sanitizerPortName = "COM3";
         private static readonly string temperaturePortName = "COM4";
-        IWMPPlaylist[] playlists;
-        static IWMPMedia media;
-        
+
+        static WMPLib.IWMPMedia media;
+        WMPLib.IWMPPlaylist playlist;
+
         protected delegate void setValue(string value);
         protected delegate void setPicture();
         protected delegate void hidePicture();
@@ -27,7 +27,7 @@ namespace BeeSafe
             InitializeComponent();
             SetTemperature("");
             pictureBoxForImage.Hide();
-            InitializeVideoPlayer(1);
+            InitializeVideoPlayer(2);
             CaptureCamera();
             InitializeComPort();
             ReadPort(phonePort);
@@ -50,11 +50,11 @@ namespace BeeSafe
             try
             {
                 var videosPath = VideoProvider.GetVideosById(id);
-                if (playlists[id] == null)
+                if(playlist != null)
                 {
-                    playlists[id]= videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}"); ;
+                    videoPlayer.playlistCollection.remove(playlist);
                 }
-                WMPLib.IWMPPlaylist playlist = playlists[id];
+                playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
                 foreach (string video in videosPath)
                 {
                     SetVideo(video);
@@ -62,7 +62,6 @@ namespace BeeSafe
                 }
 
                 videoPlayer.currentPlaylist = playlist;
-                videoPlayer.uiMode = "None";
                 videoPlayer.settings.setMode("loop", true);
                 videoPlayer.settings.setMode("shuffle", true);
 
