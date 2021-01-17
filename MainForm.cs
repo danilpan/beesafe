@@ -27,8 +27,8 @@ namespace BeeSafe
             InitializeComponent();
             SetTemperature("");
             pictureBoxForImage.Hide();
-            InitializeVideoPlayer(2);
-            //CaptureCamera();
+            InitializeVideoPlayer(1);
+            CaptureCamera();
             InitializeComPort();
             ReadPort(phonePort);
         }
