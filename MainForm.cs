@@ -51,12 +51,6 @@ namespace BeeSafe
             {
                 var videosPath = VideoProvider.GetVideosById(id);
 
-                if (playlist != null)
-                {
-                    playlist.clear();
-                    videoPlayer.playlistCollection.remove(playlist);
-                }
-
                 playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
 
                 foreach (string video in videosPath)
@@ -66,8 +60,8 @@ namespace BeeSafe
                 }
 
                 videoPlayer.currentPlaylist = playlist;
+                videoPlayer.uiMode = "None";
                 videoPlayer.settings.setMode("loop", true);
-                videoPlayer.settings.setMode("shuffle", true);
             }
             catch (Exception e)
             {
@@ -158,6 +152,7 @@ namespace BeeSafe
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             char c1 = getSignal(sender);
+
             // Рекламные ролики
             if (c1 == '1')
             {
@@ -169,9 +164,9 @@ namespace BeeSafe
             // Демонстрация
             else if (c1 == '2')
             {
-                InitializeVideoPlayer(2);
                 HidePictureBox();
                 SetTemperature("");
+                InitializeVideoPlayer(2);
             }
 
             // Положите телефон
