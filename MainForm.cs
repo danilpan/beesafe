@@ -28,7 +28,7 @@ namespace BeeSafe
             SetTemperature("");
             pictureBoxForImage.Hide();
             InitializeVideoPlayer(2);
-            CaptureCamera();
+            //CaptureCamera();
             InitializeComPort();
             ReadPort(phonePort);
         }
@@ -61,6 +61,7 @@ namespace BeeSafe
 
                 videoPlayer.currentPlaylist = playlist;
                 videoPlayer.uiMode = "None";
+                videoPlayer.settings.setMode("loop", true);
             }
             catch (Exception e)
             {
@@ -83,7 +84,6 @@ namespace BeeSafe
         private void CaptureCamera()
         {
             Thread camera = new Thread(new ThreadStart(CaptureCameraCallback));
-            camera.IsBackground = true;
             camera.Start();
         }
         private void CaptureCameraCallback()
