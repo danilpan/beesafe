@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
+using WMPLib;
 
 namespace BeeSafe
 {
@@ -13,9 +14,9 @@ namespace BeeSafe
         private static SerialPort phonePort;
         private static readonly string sanitizerPortName = "COM3";
         private static readonly string temperaturePortName = "COM4";
-
-        static WMPLib.IWMPMedia media;
-
+        IWMPPlaylist[] playlists;
+        static IWMPMedia media;
+        
         protected delegate void setValue(string value);
         protected delegate void setPicture();
         protected delegate void hidePicture();
@@ -49,10 +50,11 @@ namespace BeeSafe
             try
             {
                 var videosPath = VideoProvider.GetVideosById(id);
-
-                WMPLib.IWMPPlaylist playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
-                playlist.clear();
-
+                if (playlists[id] == null)
+                {
+                    playlists[id]= videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}"); ;
+                }
+                WMPLib.IWMPPlaylist playlist = playlists[id];
                 foreach (string video in videosPath)
                 {
                     SetVideo(video);
@@ -165,9 +167,9 @@ namespace BeeSafe
             // Демонстрация
             else if (c1 == '2')
             {
+                InitializeVideoPlayer(2);
                 HidePictureBox();
                 SetTemperature("");
-                InitializeVideoPlayer(2);
             }
 
             // Положите телефон
