@@ -62,14 +62,20 @@ namespace BeeSafe
 
         private void sendMessageToClientWithSubject(String message, String clientEmail, String subject)
         {
-            MailMessage mail = new MailMessage();
+            try
+            {
+                MailMessage mail = new MailMessage();
 
-            mail.From = this.sender;
-            mail.To.Add(clientEmail);
-            mail.Subject = subject;
-            mail.Body = message;
+                mail.From = this.sender;
+                mail.To.Add(clientEmail);
+                mail.Subject = subject;
+                mail.Body = message;
 
-            this.smtp.Send(mail);
+                this.smtp.Send(mail);
+            }
+            catch{
+                LogControl.Write(subject + " " + message);
+            }
         }
 
         public void sendMessage(String message, String clientEmail)
