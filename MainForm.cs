@@ -103,7 +103,6 @@ namespace BeeSafe
             }
         }
 
-
         public void ShowPictureBox()
         {
 
@@ -158,7 +157,7 @@ namespace BeeSafe
             // Демонстрация
             else if (c1 == '2')
             {
-                HidePictureBox();
+                ShowPictureBox();
                 SetTemperature("");
                 InitializeVideoPlayer(2);
             }
