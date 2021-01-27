@@ -21,8 +21,6 @@ namespace BeeSafe
         protected delegate void setValue(string value);
         protected delegate void setPicture();
         protected delegate void hidePicture();
-        protected delegate void getImage();
-
         public MainForm()
         {
             InitializeComponent();
@@ -88,7 +86,6 @@ namespace BeeSafe
         }
         private void CaptureCameraCallback()
         {
-
             Mat frame = new Mat();
             VideoCapture capture = new VideoCapture(0);
             capture.Open(0);
@@ -97,8 +94,15 @@ namespace BeeSafe
             {
                 while (true)
                 {
-                    capture.Read(frame);
-                    image = BitmapConverter.ToBitmap(frame);
+                    try
+                    {
+                        capture.Read(frame);
+                        image = BitmapConverter.ToBitmap(frame);
+                    }
+                    catch(Exception exception)
+                    {
+                        Emailer.getInstance().logException(exception);
+                    }
                 }
             }
         }
@@ -119,7 +123,7 @@ namespace BeeSafe
 
         public void HidePictureBox()
         {
-            if (this.InvokeRequired) this.Invoke(new setPicture(pictureBoxForImage.Hide));
+            if (this.InvokeRequired) this.Invoke(new hidePicture((pictureBoxForImage.Hide)));
             else pictureBoxForImage.Hide();
         }
 
@@ -179,7 +183,7 @@ namespace BeeSafe
             }
 
             // Не успешная обработка
-            else if (c1 == '5')
+            else if (c1 == '5')ca
             {
                 InitializeVideoPlayer(5);
                 HidePictureBox();
