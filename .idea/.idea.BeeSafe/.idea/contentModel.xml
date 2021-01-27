@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\danil\AppData\Local\JetBrains\Rider2020.2\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\danil\AppData\Local\JetBrains\Rider2020.2\resharper-host\Local\Transient\Rider\v202\SolutionCaches\_BeeSafe.2017352251.00" t="ExcludeRecursive" />
+    <e p="C:\Users\danil\AppData\Roaming\JetBrains\Rider2020.2\consoles\db" t="IncludeRecursive" />
+    <e p="C:\Users\danil\AppData\Roaming\JetBrains\Rider2020.2\extensions" t="IncludeRecursive" />
+    <e p="C:\Users\danil\Desktop\BeeSafe" t="IncludeRecursive">
+      <e p="App.config" t="Include" />
+      <e p="BeeSafe.csproj" t="IncludeRecursive" />
+      <e p="BeeSafe.sln" t="IncludeFlat" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="dll" t="Include">
+        <e p="x64" t="Include" />
+        <e p="x86" t="Include" />
+      </e>
+      <e p="Emailer.cs" t="Include" />
+      <e p="LogControl.cs" t="Include" />
+      <e p="MainForm.cs" t="Include" />
+      <e p="MainForm.Designer.cs" t="Include" />
+      <e p="MainForm.resx" t="Include" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive">
+        <e p="OpenCvSharp4.runtime.win.4.5.1.20201229\runtimes\win-x64\native\opencv_videoio_ffmpeg451_64.dll" t="Include" />
+        <e p="OpenCvSharp4.runtime.win.4.5.1.20201229\runtimes\win-x64\native\OpenCvSharpExtern.dll" t="Include" />
+        <e p="OpenCvSharp4.runtime.win.4.5.1.20201229\runtimes\win-x86\native\opencv_videoio_ffmpeg451.dll" t="Include" />
+        <e p="OpenCvSharp4.runtime.win.4.5.1.20201229\runtimes\win-x86\native\OpenCvSharpExtern.dll" t="Include" />
+      </e>
+      <e p="packages.config" t="Include" />
+      <e p="Program.cs" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="AssemblyInfo.cs" t="Include" />
+        <e p="Resources.Designer.cs" t="Include" />
+        <e p="Resources.resx" t="Include" />
+        <e p="Settings.Designer.cs" t="Include" />
+        <e p="Settings.settings" t="Include" />
+      </e>
+      <e p="VideoProvider.cs" t="Include" />
+    </e>
+  </component>
+</project>

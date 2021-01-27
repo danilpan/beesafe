@@ -16,6 +16,7 @@ namespace BeeSafe
 
         static WMPLib.IWMPMedia media;
         WMPLib.IWMPPlaylist playlist;
+        private Bitmap image;
 
         protected delegate void setValue(string value);
         protected delegate void setPicture();
@@ -96,15 +97,8 @@ namespace BeeSafe
             {
                 while (true)
                 {
-
                     capture.Read(frame);
-                    Bitmap image = BitmapConverter.ToBitmap(frame);
-                    if (pictureBoxForImage.Image != null)
-                    {
-                        pictureBoxForImage.Image.Dispose();
-                    }
-                    pictureBoxForImage.Image = image;
-
+                    image = BitmapConverter.ToBitmap(frame);
                 }
             }
         }
@@ -115,10 +109,11 @@ namespace BeeSafe
 
             if (this.InvokeRequired)
             {
-                this.Invoke(new setPicture(pictureBoxForImage.Show));
+                this.Invoke(new setPicture(ShowPictureBox));
             }
             else
             {
+                pictureBoxForImage.Image = image;
                 pictureBoxForImage.Show();
             }
         }
