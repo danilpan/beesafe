@@ -94,15 +94,9 @@ namespace BeeSafe
             {
                 while (true)
                 {
-                    try
-                    {
-                        capture.Read(frame);
-                        image = BitmapConverter.ToBitmap(frame);
-                    }
-                    catch(Exception exception)
-                    {
-                        Emailer.getInstance().logException(exception);
-                    }
+                    image = null;
+                    capture.Read(frame);
+                    image = BitmapConverter.ToBitmap(frame);
                 }
             }
         }
@@ -116,6 +110,10 @@ namespace BeeSafe
             }
             else
             {
+                if (pictureBoxForImage.Image != null)
+                {
+                    pictureBoxForImage.Image.Dispose();
+                }
                 pictureBoxForImage.Image = image;
                 pictureBoxForImage.Show();
             }
@@ -123,8 +121,14 @@ namespace BeeSafe
 
         public void HidePictureBox()
         {
-            if (this.InvokeRequired) this.Invoke(new hidePicture((pictureBoxForImage.Hide)));
-            else pictureBoxForImage.Hide();
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new hidePicture((pictureBoxForImage.Hide)));
+            }
+            else
+            {
+                pictureBoxForImage.Hide();
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -183,7 +187,7 @@ namespace BeeSafe
             }
 
             // Не успешная обработка
-            else if (c1 == '5')ca
+            else if (c1 == '5')
             {
                 InitializeVideoPlayer(5);
                 HidePictureBox();
@@ -222,7 +226,7 @@ namespace BeeSafe
             try
             {
                 port.Open();
-                temperature = port.ReadLine().Split(' ')[4];
+                temperature = port.ReadLine();
                 port.Close();
             }
             catch (Exception ex)
