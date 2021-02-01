@@ -50,7 +50,7 @@ namespace BeeSafe
             {
                 var videosPath = VideoProvider.GetVideosById(id);
                 videoPlayer.playlistCollection.remove(videoPlayer.currentPlaylist);
-                playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
+                playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
                 foreach (string video in videosPath)
                 {
                     SetVideo(video);
@@ -153,11 +153,13 @@ namespace BeeSafe
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             char c1 = getSignal(sender);
+            
+            HidePictureBox();
+            System.GC.Collect();
 
             // Рекламные ролики
             if (c1 == '1')
             {
-                HidePictureBox();
                 SetTemperature("");
                 InitializeVideoPlayer(1);
             }
@@ -182,7 +184,6 @@ namespace BeeSafe
             else if (c1 == '4')
             {
                 InitializeVideoPlayer(4);
-                HidePictureBox();
                 SetTemperature("");
             }
 
@@ -190,7 +191,6 @@ namespace BeeSafe
             else if (c1 == '5')
             {
                 InitializeVideoPlayer(5);
-                HidePictureBox();
                 SetTemperature("");
             }
 
