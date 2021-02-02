@@ -44,13 +44,13 @@ namespace BeeSafe
 
         }
 
-        private void InitializeVideoPlayer(int id)  
+        private void InitializeVideoPlayer(int id)
         {
             try
             {
                 var videosPath = VideoProvider.GetVideosById(id);
                 videoPlayer.playlistCollection.remove(videoPlayer.currentPlaylist);
-                playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist{id}");
+                playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
                 foreach (string video in videosPath)
                 {
                     SetVideo(video);
@@ -94,9 +94,15 @@ namespace BeeSafe
             {
                 while (true)
                 {
-                    image = null;
-                    capture.Read(frame);
-                    image = BitmapConverter.ToBitmap(frame);
+                    try
+                    {
+                        capture.Read(frame);
+                        image = BitmapConverter.ToBitmap(frame);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                 }
             }
         }
@@ -121,14 +127,8 @@ namespace BeeSafe
 
         public void HidePictureBox()
         {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new hidePicture((pictureBoxForImage.Hide)));
-            }
-            else
-            {
-                pictureBoxForImage.Hide();
-            }
+            if (this.InvokeRequired) this.Invoke(new hidePicture((pictureBoxForImage.Hide)));
+            else pictureBoxForImage.Hide();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -149,13 +149,12 @@ namespace BeeSafe
             sp.Open();
         }
 
+
         //Data Received Event Handler
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             char c1 = getSignal(sender);
-            
             HidePictureBox();
-            System.GC.Collect();
 
             // Рекламные ролики
             if (c1 == '1')
@@ -168,7 +167,7 @@ namespace BeeSafe
             else if (c1 == '2')
             {
                 ShowPictureBox();
-                SetTemperature("");
+                SetTemperature(getTemperature());
                 InitializeVideoPlayer(2);
             }
 
