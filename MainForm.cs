@@ -16,7 +16,7 @@ namespace BeeSafe
 
         
         private Bitmap image;
-        private WMPLib.IWMPPlaylist[] playlists = new WMPLib.IWMPPlaylist[5];
+        private WMPLib.IWMPPlaylist[] playlists = new WMPLib.IWMPPlaylist[6];
 
         protected delegate void setValue(string value);
         protected delegate void setPicture();
@@ -47,10 +47,10 @@ namespace BeeSafe
         }
         private void InitializePlaylists()
         {
-            for(int i = 1; i <= 5; i++)
+            for (int i = 1; i <= 5; i++)
             {
                 var videosPath = VideoProvider.GetVideosById(i);
-                WMPLib.IWMPPlaylist playlist = videoPlayer.playlistCollection.getAll().Item(i);
+                WMPLib.IWMPPlaylist playlist = videoPlayer.playlistCollection.newPlaylist($"playlist{i}");
                 foreach (string video in videosPath)
                 {
                     WMPLib.IWMPMedia media = videoPlayer.newMedia(video);
