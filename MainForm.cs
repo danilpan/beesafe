@@ -43,29 +43,21 @@ namespace BeeSafe
             }
 
         }
-        private WMPLib.IWMPPlaylist getPlaylist(int id)
-        {
-            WMPLib.IWMPPlaylistArray playlistCollection = videoPlayer.playlistCollection.getByName($"myplaylist1{id}");
-            if (playlistCollection.count > 0)
-            {
-                return playlistCollection.Item(0);
-            }
-
-            return videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
-        }
-
+     
         private void InitializeVideoPlayer(int id)
         {
             try
             {
                 var videosPath = VideoProvider.GetVideosById(id);
-                WMPLib.IWMPPlaylist playlist = getPlaylist(id);
-                playlist.clear();
+                videoPlayer.currentPlaylist.clear();
+                videoPlayer.playlistCollection.remove(videoPlayer.currentPlaylist);
+                WMPLib.IWMPPlaylist playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
                 foreach (string video in videosPath)
                 {
                     SetVideo(video);
                     playlist.appendItem(media);
                 }
+
                 videoPlayer.currentPlaylist = playlist;
                 videoPlayer.uiMode = "None";
                 videoPlayer.settings.setMode("loop", true);
