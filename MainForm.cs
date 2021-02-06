@@ -23,9 +23,9 @@ namespace BeeSafe
         protected delegate void hidePicture();
         public MainForm()
         {
+            InitializeComponent();
             VideoProvider.InitializeVideos();
             InitializePlaylists();
-            InitializeComponent();
             SetTemperature("");
             pictureBoxForImage.Hide();
             InitializeVideoPlayer(1);
