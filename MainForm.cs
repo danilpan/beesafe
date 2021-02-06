@@ -15,7 +15,6 @@ namespace BeeSafe
         private static readonly string temperaturePortName = "COM4";
 
         static WMPLib.IWMPMedia media;
-        WMPLib.IWMPPlaylist playlist;
         private Bitmap image;
 
         protected delegate void setValue(string value);
@@ -23,6 +22,7 @@ namespace BeeSafe
         protected delegate void hidePicture();
         public MainForm()
         {
+            VideoProvider.InitializeVideos();
             InitializeComponent();
             SetTemperature("");
             pictureBoxForImage.Hide();
@@ -43,14 +43,14 @@ namespace BeeSafe
             }
 
         }
-
+     
         private void InitializeVideoPlayer(int id)
         {
             try
             {
                 var videosPath = VideoProvider.GetVideosById(id);
                 videoPlayer.playlistCollection.remove(videoPlayer.currentPlaylist);
-                playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
+                WMPLib.IWMPPlaylist playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
                 foreach (string video in videosPath)
                 {
                     SetVideo(video);
@@ -186,7 +186,7 @@ namespace BeeSafe
             else if (c1 == '5')
             {
                 InitializeVideoPlayer(5);
-                SetTemperature("");
+                SetTemperature("");  
             }
 
             //Показ фотографий и температуры 
@@ -200,6 +200,9 @@ namespace BeeSafe
             {
                 Emailer.getInstance().logOnLiquidEnded();
             }
+
+            System.GC.Collect();
+            System.GC.WaitForPendingFinalizers();
         }
 
         private char getSignal(object sender)

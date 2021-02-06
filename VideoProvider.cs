@@ -13,76 +13,79 @@ namespace BeeSafe
         private static string lastVideoLanguage = RUSSIAN;
         private static string lastVideoProcessingLanguage = RUSSIAN;
 
+        private static  string [] advertVideos;
+        private static string[] demonstrationVideosKz = new string[1];
+        private static string[] demonstrationVideosRu = new string[1];
+        private static string[] alertVideo = new string[1];
+        private static string[] putPhoneVideo = new string[1];
+        private static string[] proccessVideosKz = new string[1];
+        private static string[] proccessVideosRu = new string[1];
 
-        public static string[] GetAdvertVideos()
+        public static void SetAdvertVideos()
         {
-            Random rnd = new Random();
-
-            string[] advertVideos = Directory.GetFiles($"{Application.StartupPath}\\Media\\AdvertVideo");
-            string[] randomizedVideoUrls = advertVideos.OrderBy(x => rnd.Next()).ToArray();
-
-            return randomizedVideoUrls;
+            advertVideos = Directory.GetFiles($"{Application.StartupPath}\\Media\\AdvertVideo");
         }
 
-        public static string[] GetDemonstrationVideo()
+        public static void SetDemonstrationVideo()
         {
             if (lastVideoLanguage == RUSSIAN)
             {
                 lastVideoLanguage = KAZAKH;
 
-                return new string[] { $"{Application.StartupPath}\\Media\\Demonstration\\{KAZAKH}.mp4" };
+                demonstrationVideosKz[0] =  $"{Application.StartupPath}\\Media\\Demonstration\\{KAZAKH}.mp4" ;
             }
             lastVideoLanguage = RUSSIAN;
-
-            return new string[] { $"{Application.StartupPath}\\Media\\Demonstration\\{RUSSIAN}.mp4" };
+            demonstrationVideosRu[0] = $"{Application.StartupPath}\\Media\\Demonstration\\{RUSSIAN}.mp4";
         }
 
-        public static string[] GetAlertVideo()
+        public static void SetAlertVideo()
         {
-            return new string[] { $"{Application.StartupPath}\\Media\\Alarm\\Alarm.mp4" };
+            alertVideo[0]=  $"{Application.StartupPath}\\Media\\Alarm\\Alarm.mp4" ;
         }
 
-        public static string[] GetPutPhoneVideo()
+        public static void SetPutPhoneVideo()
         {
-            return new string[] { $"{Application.StartupPath}\\Media\\PutPhone\\PutPhone.mp4" };
+            putPhoneVideo[0] = $"{Application.StartupPath}\\Media\\PutPhone\\PutPhone.mp4";
         }
 
-        public static string[] GetPrococessVideo()
+        public static void SetPrococessVideos()
         {
             if (lastVideoProcessingLanguage == RUSSIAN)
             {
                 lastVideoProcessingLanguage = KAZAKH;
 
-                return new string[] { $"{Application.StartupPath}\\Media\\Process\\{KAZAKH}.mp4" };
+                proccessVideosKz[0]= $"{Application.StartupPath}\\Media\\Process\\{KAZAKH}.mp4";
             }
             lastVideoProcessingLanguage = RUSSIAN;
 
-            return new string[] { $"{Application.StartupPath}\\Media\\Process\\{RUSSIAN}.mp4" }; ;
+            proccessVideosRu[0] = $"{Application.StartupPath}\\Media\\Process\\{RUSSIAN}.mp4";
         }
 
+
+        public static void InitializeVideos()
+        {
+            SetAdvertVideos();
+            SetDemonstrationVideo();
+            SetAlertVideo();
+            SetPutPhoneVideo();
+            SetPrococessVideos();
+        }
         public static string[] GetVideosById(int id)
         {
-            var videosPath = new string[] { };
             switch (id)
             {
                 case 1:
-                    videosPath = VideoProvider.GetAdvertVideos();
-                    break;
+                    return  advertVideos;
                 case 2:
-                    videosPath = VideoProvider.GetDemonstrationVideo();
-                    break;
+                    return lastVideoLanguage == KAZAKH ? demonstrationVideosKz : demonstrationVideosRu;
                 case 3:
-                    videosPath = VideoProvider.GetPutPhoneVideo();
-                    break;
+                    return putPhoneVideo;
                 case 4:
-                    videosPath = VideoProvider.GetPrococessVideo();
-                    break;
+                    return lastVideoProcessingLanguage == KAZAKH ? proccessVideosKz : proccessVideosRu;
                 case 5:
-                    videosPath = VideoProvider.GetAlertVideo();
-                    break;
+                    return alertVideo;
             }
-
-            return videosPath;
+            return null;
         }
     }
 }
