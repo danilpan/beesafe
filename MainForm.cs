@@ -96,7 +96,6 @@ namespace BeeSafe
                 {
                     try
                     {
-                        image = null;
                         capture.Read(frame);
                         image = BitmapConverter.ToBitmap(frame);
                     }
@@ -119,9 +118,6 @@ namespace BeeSafe
             {
                 pictureBoxForImage.Image = image;
                 pictureBoxForImage.Show();
-                image = null;
-                System.GC.Collect();
-                System.GC.WaitForPendingFinalizers();
             }
         }
 
@@ -204,6 +200,8 @@ namespace BeeSafe
             {
                 Emailer.getInstance().logOnLiquidEnded();
             }
+            System.GC.Collect();
+            System.GC.WaitForPendingFinalizers();
         }
 
         private char getSignal(object sender)
