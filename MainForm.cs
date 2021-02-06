@@ -200,8 +200,6 @@ namespace BeeSafe
             {
                 Emailer.getInstance().logOnLiquidEnded();
             }
-            System.GC.Collect();
-            System.GC.WaitForPendingFinalizers();
         }
 
         private char getSignal(object sender)
