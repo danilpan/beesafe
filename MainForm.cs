@@ -96,6 +96,7 @@ namespace BeeSafe
                 {
                     try
                     {
+                        image = null;
                         capture.Read(frame);
                         image = BitmapConverter.ToBitmap(frame);
                     }
@@ -116,12 +117,11 @@ namespace BeeSafe
             }
             else
             {
-                if (pictureBoxForImage.Image != null)
-                {
-                    pictureBoxForImage.Image.Dispose();
-                }
                 pictureBoxForImage.Image = image;
                 pictureBoxForImage.Show();
+                image = null;
+                System.GC.Collect();
+                System.GC.WaitForPendingFinalizers();
             }
         }
 
