@@ -14,8 +14,9 @@ namespace BeeSafe
         private static readonly string sanitizerPortName = "COM3";
         private static readonly string temperaturePortName = "COM4";
 
-        static WMPLib.IWMPMedia media;
+        
         private Bitmap image;
+        private WMPLib.IWMPPlaylist[] playlists = new WMPLib.IWMPPlaylist[5];
 
         protected delegate void setValue(string value);
         protected delegate void setPicture();
@@ -23,6 +24,7 @@ namespace BeeSafe
         public MainForm()
         {
             VideoProvider.InitializeVideos();
+            InitializePlaylists();
             InitializeComponent();
             SetTemperature("");
             pictureBoxForImage.Hide();
@@ -43,20 +45,34 @@ namespace BeeSafe
             }
 
         }
+        private void InitializePlaylists()
+        {
+            for(int i = 1; i <= 5; i++)
+            {
+                var videosPath = VideoProvider.GetVideosById(i);
+                WMPLib.IWMPPlaylist playlist = videoPlayer.playlistCollection.getAll().Item(i);
+                foreach (string video in videosPath)
+                {
+                    WMPLib.IWMPMedia media = videoPlayer.newMedia(video);
+                    playlist.appendItem(media);
+                }
+                playlists[i] = playlist;
+            }
+        }
+        private void clearPlaylistCollections()
+        {
+            videoPlayer.currentPlaylist.clear();
+            for(int i = 1; i <= 5; i++)
+            {
+                videoPlayer.playlistCollection.remove(playlists[i]);
+            }
+        }
      
         private void InitializeVideoPlayer(int id)
         {
             try
             {
-                var videosPath = VideoProvider.GetVideosById(id);
-                videoPlayer.playlistCollection.remove(videoPlayer.currentPlaylist);
-                WMPLib.IWMPPlaylist playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
-                foreach (string video in videosPath)
-                {
-                    SetVideo(video);
-                    playlist.appendItem(media);
-                }
-
+                WMPLib.IWMPPlaylist playlist = playlists[id];
                 videoPlayer.currentPlaylist = playlist;
                 videoPlayer.uiMode = "None";
                 videoPlayer.settings.setMode("loop", true);
@@ -67,18 +83,6 @@ namespace BeeSafe
             }
         }
 
-        public void SetVideo(string value)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new setValue(SetVideo), value);
-            }
-
-            else
-            {
-                media = videoPlayer.newMedia(value);
-            }
-        }
         private void CaptureCamera()
         {
             Thread camera = new Thread(new ThreadStart(CaptureCameraCallback));
@@ -151,7 +155,7 @@ namespace BeeSafe
         {
             char c1 = getSignal(sender);
             HidePictureBox();
-
+            clearPlaylistCollections();
             // Рекламные ролики
             if (c1 == '1')
             {
