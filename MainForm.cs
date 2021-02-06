@@ -22,14 +22,14 @@ namespace BeeSafe
         protected delegate void hidePicture();
         public MainForm()
         {
-            VideoProvider.InitializeVideos();
             InitializeComponent();
             SetTemperature("");
-            pictureBoxForImage.Hide();
-            InitializeVideoPlayer(1);
-            CaptureCamera();
             InitializeComPort();
             ReadPort(phonePort);
+            pictureBoxForImage.Hide();
+            VideoProvider.InitializeVideos();
+            InitializeVideoPlayer(1);
+            CaptureCamera();
         }
         public void SetTemperature(string value)
         {
@@ -49,7 +49,6 @@ namespace BeeSafe
             try
             {
                 var videosPath = VideoProvider.GetVideosById(id);
-                videoPlayer.currentPlaylist.clear();
                 videoPlayer.playlistCollection.remove(videoPlayer.currentPlaylist);
                 WMPLib.IWMPPlaylist playlist = videoPlayer.playlistCollection.newPlaylist($"myplaylist1{id}");
                 foreach (string video in videosPath)
