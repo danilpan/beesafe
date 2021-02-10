@@ -3,7 +3,6 @@ using OpenCvSharp.Extensions;
 using System;
 using System.Drawing;
 using System.IO.Ports;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace BeeSafe
@@ -15,7 +14,6 @@ namespace BeeSafe
         private static readonly string temperaturePortName = "COM4";
 
         static WMPLib.IWMPMedia media;
-        private Bitmap image;
         private VideoCapture capture;
 
         protected delegate void setValue(string value);
@@ -128,6 +126,7 @@ namespace BeeSafe
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             phonePort.Close();
+            capture.Dispose();
             Environment.Exit(1);
         }
 
