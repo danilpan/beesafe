@@ -16,6 +16,7 @@ namespace BeeSafe
 
         static WMPLib.IWMPMedia media;
         private Bitmap image;
+        private VideoCapture capture;
 
         protected delegate void setValue(string value);
         protected delegate void setPicture();
@@ -29,7 +30,7 @@ namespace BeeSafe
             pictureBoxForImage.Hide();
             VideoProvider.InitializeVideos();
             InitializeVideoPlayer(1);
-            CaptureCamera();
+            CreateVideoCapture();
         }
         public void SetTemperature(string value)
         {
@@ -79,32 +80,15 @@ namespace BeeSafe
                 media = videoPlayer.newMedia(value);
             }
         }
-        private void CaptureCamera()
+     
+        private void CreateVideoCapture()
         {
-            Thread camera = new Thread(new ThreadStart(CaptureCameraCallback));
-            camera.Start();
-        }
-        private void CaptureCameraCallback()
-        {
-            Mat frame = new Mat();
-            VideoCapture capture = new VideoCapture(0);
-            capture.Open(0);
-
             if (capture.IsOpened())
             {
-                while (true)
-                {
-                    try
-                    {
-                        Mat mat = capture.RetrieveMat();
-                        image = BitmapConverter.ToBitmap(mat);
-                    }
-                    catch (Exception e)
-                    {
-
-                    }
-                }
+                capture.Dispose();
             }
+            capture = new VideoCapture(0);
+            capture.Open(0);
         }
 
         public void ShowPictureBox()
@@ -116,15 +100,29 @@ namespace BeeSafe
             }
             else
             {
-                pictureBoxForImage.Image = image;
-                pictureBoxForImage.Show();
+                if (capture.IsOpened())
+                {
+                    pictureBoxForImage.Image = BitmapConverter.ToBitmap(capture.RetrieveMat());
+                    pictureBoxForImage.Show();
+                }
+                else
+                {
+                    CreateVideoCapture();
+                }
             }
         }
 
         public void HidePictureBox()
         {
-            if (this.InvokeRequired) this.Invoke(new hidePicture((pictureBoxForImage.Hide)));
-            else pictureBoxForImage.Hide();
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new hidePicture((pictureBoxForImage.Hide)));
+            }
+            else
+            {
+                pictureBoxForImage.Hide();
+                pictureBoxForImage.Image.Dispose();
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
