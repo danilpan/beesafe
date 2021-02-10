@@ -96,8 +96,8 @@ namespace BeeSafe
                 {
                     try
                     {
-                        capture.Read(frame);
-                        image = BitmapConverter.ToBitmap(frame);
+                        Mat mat = capture.RetrieveMat();
+                        image = BitmapConverter.ToBitmap(mat);
                     }
                     catch (Exception e)
                     {
