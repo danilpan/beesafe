@@ -130,6 +130,7 @@ namespace BeeSafe
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             char c1 = getSignal(sender);
+            LogControl.Write("Signal from COM - "+c1);
             HidePictureBox();
 
             // Рекламные ролики
