@@ -14,7 +14,7 @@ namespace BeeSafe
         private static readonly string temperaturePortName = "COM4";
 
         static WMPLib.IWMPMedia media;
-        private VideoCapture capture;
+        CameraProvider camera;
 
         protected delegate void setValue(string value);
         protected delegate void setPicture();
@@ -28,7 +28,7 @@ namespace BeeSafe
             pictureBoxForImage.Hide();
             VideoProvider.InitializeVideos();
             InitializeVideoPlayer(1);
-            CreateVideoCapture();
+            camera = new CameraProvider();
         }
         public void SetTemperature(string value)
         {
@@ -79,16 +79,6 @@ namespace BeeSafe
             }
         }
      
-        private void CreateVideoCapture()
-        {
-            if (capture.IsOpened())
-            {
-                capture.Dispose();
-            }
-            capture = new VideoCapture(0);
-            capture.Open(0);
-        }
-
         public void ShowPictureBox()
         {
 
@@ -98,15 +88,12 @@ namespace BeeSafe
             }
             else
             {
-                if (capture.IsOpened())
+                if(pictureBoxForImage.Image != null)
                 {
-                    pictureBoxForImage.Image = BitmapConverter.ToBitmap(capture.RetrieveMat());
-                    pictureBoxForImage.Show();
+                    pictureBoxForImage.Image.Dispose();
                 }
-                else
-                {
-                    CreateVideoCapture();
-                }
+                pictureBoxForImage.Image = camera.getImage();
+                pictureBoxForImage.Show();
             }
         }
 
@@ -126,7 +113,6 @@ namespace BeeSafe
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             phonePort.Close();
-            capture.Dispose();
             Environment.Exit(1);
         }
 
@@ -216,8 +202,7 @@ namespace BeeSafe
         {
             string temperature = "Not Identified";
             SerialPort port = new SerialPort(temperaturePortName, 9600, Parity.None, 8, StopBits.One);
-            try
-            {
+            try { 
                 port.Open();
                 temperature = port.ReadLine();
                 port.Close();
