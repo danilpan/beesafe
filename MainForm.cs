@@ -90,6 +90,7 @@ namespace BeeSafe
                     pictureBoxForImage.Image.Dispose();
                 }
                 pictureBoxForImage.Image = camera.getImage();
+                pictureBoxForImage.Update();
                 pictureBoxForImage.Show();
             }
         }
