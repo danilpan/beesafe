@@ -20,7 +20,7 @@ namespace BeeSafe
 
         public Bitmap getImage()
         {
-            capture.RetrieveMat();
+            capture.RetrieveMat().Dispose();
             return BitmapConverter.ToBitmap(capture.RetrieveMat());
         }
     }
