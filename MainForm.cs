@@ -210,7 +210,33 @@ namespace BeeSafe
         {
             LogControl.Write("Proverka na vwivost'");
 
-            if (!phonePort.BaseStream.CanRead)
+            try
+            {
+                reconnnectToComport();
+            }
+            catch (Exception e)
+            {
+                LogControl.Write(e.Message);
+            }
+
+            if (!camera.isConnected())
+            {
+                camera = new CameraProvider();
+            }
+
+            LogControl.Write("Proverka na vwivost konchena");
+        }
+
+        private void reconnnectToComport()
+        {
+            try
+            {
+                if (!phonePort.BaseStream.CanRead)
+                {
+                    throw new Exception("Not connected to COMPORT");
+                }
+            }
+            catch (Exception)
             {
                 LogControl.Write("Ne podpisan");
                 phonePort.Close();
@@ -220,12 +246,6 @@ namespace BeeSafe
                 LogControl.Write("Podpisan");
             }
 
-            if (!camera.isConnected())
-            {
-                camera = new CameraProvider();
-            }
-
-            LogControl.Write("Proverka na vwivost konchena");
         }
         //Temperature Read
         private string getTemperature()
