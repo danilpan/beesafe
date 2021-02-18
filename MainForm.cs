@@ -26,6 +26,7 @@ namespace BeeSafe
             VideoProvider.InitializeVideos();
             InitializeVideoPlayer(1);
             camera = new CameraProvider();
+            createComportReconnecter();
         }
         public void SetTemperature(string value)
         {
@@ -195,7 +196,28 @@ namespace BeeSafe
 
             return c1;
         }
+        private void createComportReconnecter()
+        {
+            var startTimeSpan = TimeSpan.Zero;
+            var periodTimeSpan = TimeSpan.FromMinutes(1);
 
+            var timer = new System.Threading.Timer((e) =>
+            {
+                reconnectToComport();
+            }, null, startTimeSpan, periodTimeSpan);
+        }
+
+        private void reconnectToComport()
+        {
+            if (!phonePort.IsOpen)
+            {
+                phonePort.Close();
+                phonePort.Dispose();
+                phonePort = new SerialPort(sanitizerPortName, 9600, Parity.None, 8, StopBits.One);
+                phonePort.DataReceived += DataReceivedHandler;
+                phonePort.Open();
+            }
+        }
         //Temperature Read
         private string getTemperature()
         {
