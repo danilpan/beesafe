@@ -36,7 +36,7 @@ namespace BeeSafe
                 w.WriteLine(" {0}", msg);
                 w.WriteLine("-----------------------");
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Emailer.getInstance().logException(e);
             }
