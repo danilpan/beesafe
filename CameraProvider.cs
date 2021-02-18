@@ -23,5 +23,10 @@ namespace BeeSafe
             capture.RetrieveMat().Dispose();
             return BitmapConverter.ToBitmap(capture.RetrieveMat());
         }
+
+        public bool isConnected()
+        {
+            return this.capture.IsOpened();
+        }
     }
 }
