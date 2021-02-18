@@ -210,7 +210,7 @@ namespace BeeSafe
         {
             LogControl.Write("Proverka na vwivost'");
 
-            if (!phonePort.RtsEnable)
+            if (!phonePort.BaseStream.CanRead)
             {
                 LogControl.Write("Ne podpisan");
                 phonePort.Close();
@@ -224,6 +224,7 @@ namespace BeeSafe
             {
                 camera = new CameraProvider();
             }
+
             LogControl.Write("Proverka na vwivost konchena");
         }
         //Temperature Read
