@@ -10,9 +10,10 @@ namespace BeeSafe
 
         public static void Write(string msg)
         {
-            _Path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             try
             {
+                _Path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
                 using (StreamWriter w = File.AppendText(Path.Combine(_Path, "log.txt")))
                 {
                     Log(msg, w);
@@ -20,26 +21,16 @@ namespace BeeSafe
                 if (DEBUG)
                     Console.WriteLine(msg);
             }
-            catch (Exception e)
-            {
-                Emailer.getInstance().logException(e);
-            }
+            catch (Exception ){}
         }
 
         static private void Log(string msg, TextWriter w)
         {
-            try
-            {
-                w.Write(Environment.NewLine);
-                w.Write("[{0} {1}]", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
-                w.Write("\t");
-                w.WriteLine(" {0}", msg);
-                w.WriteLine("-----------------------");
-            }
-            catch (Exception e)
-            {
-                Emailer.getInstance().logException(e);
-            }
+            w.Write(Environment.NewLine);
+            w.Write("[{0} {1}]", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
+            w.Write("\t");
+            w.WriteLine(" {0}", msg);
+            w.WriteLine("-----------------------");
         }
     }
 }

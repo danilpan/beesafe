@@ -208,47 +208,12 @@ namespace BeeSafe
 
         private void checkConnections()
         {
-            LogControl.Write("Proverka na vwivost'");
-
-            try
-            {
-                reconnnectToComport();
-            }
-            catch (Exception e)
-            {
-                LogControl.Write(e.Message);
-            }
-
             if (!camera.isConnected())
             {
                 camera = new CameraProvider();
             }
-
-            LogControl.Write("Proverka na vwivost konchena");
         }
 
-        private void reconnnectToComport()
-        {
-            try
-            {
-                LogControl.Write(phonePort.IsOpen ? "true" : "false");
-                if (!phonePort.BaseStream.CanRead)
-                {
-                    throw new Exception("Not connected to COMPORT");
-                }
-                LogControl.Write(phonePort.IsOpen ? "true" : "false");
-            }
-            catch (Exception)
-            {
-                LogControl.Write("Ne podpisan");
-                phonePort.Close();
-                phonePort.Dispose();
-                InitializeComPort();
-                ReadPort(phonePort);
-                LogControl.Write("Podpisan");
-            }
-
-        }
         //Temperature Read
         private string getTemperature()
         {
