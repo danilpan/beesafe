@@ -132,7 +132,6 @@ namespace BeeSafe
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             char c1 = getSignal(sender);
-            LogControl.Write("Signal from COM - "+c1);
             HidePictureBox();
 
             // Рекламные ролики
@@ -199,7 +198,7 @@ namespace BeeSafe
         private void createHealthChecker()
         {
             var startTimeSpan = TimeSpan.Zero;
-            var periodTimeSpan = TimeSpan.FromMinutes(1);
+            var periodTimeSpan = TimeSpan.FromSeconds(30);
 
             var timer = new System.Threading.Timer((e) =>
             {
@@ -209,23 +208,23 @@ namespace BeeSafe
 
         private void checkConnections()
         {
-            LogControl.Write("Проверка на вшивость");
+            LogControl.Write("Proverka na vwivost'");
 
             if (!phonePort.IsOpen)
             {
-                LogControl.Write("Не подписан");
+                LogControl.Write("Ne podpisan");
                 phonePort.Close();
                 phonePort.Dispose();
                 InitializeComPort();
                 ReadPort(phonePort);
-                LogControl.Write("Подписан");
+                LogControl.Write("Podpisan");
             }
 
             if (!camera.isConnected())
             {
                 camera = new CameraProvider();
             }
-            LogControl.Write("Проверка на вшивость завершена");
+            LogControl.Write("Proverka na vwivost");
         }
         //Temperature Read
         private string getTemperature()
