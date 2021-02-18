@@ -20,8 +20,9 @@ namespace BeeSafe
                 if (DEBUG)
                     Console.WriteLine(msg);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Emailer.getInstance().logException(e);
             }
         }
 
@@ -37,6 +38,7 @@ namespace BeeSafe
             }
             catch (Exception)
             {
+                Emailer.getInstance().logException(e);
             }
         }
     }
