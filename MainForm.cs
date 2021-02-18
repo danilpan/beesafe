@@ -133,7 +133,7 @@ namespace BeeSafe
         {
             char c1 = getSignal(sender);
             HidePictureBox();
-
+            LogControl.Write("Signal from COMport" + c1);
             // Рекламные ролики
             if (c1 == '1')
             {
@@ -231,10 +231,12 @@ namespace BeeSafe
         {
             try
             {
+                LogControl.Write(phonePort.IsOpen ? "true" : "false");
                 if (!phonePort.BaseStream.CanRead)
                 {
                     throw new Exception("Not connected to COMPORT");
                 }
+                LogControl.Write(phonePort.IsOpen ? "true" : "false");
             }
             catch (Exception)
             {
